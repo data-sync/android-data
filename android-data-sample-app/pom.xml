@@ -8,9 +8,9 @@
         <version>1.0.0-SNAPSHOT</version>
     </parent>
     <groupId>com.android.data</groupId>
-    <artifactId>android-data-tests</artifactId>
+    <artifactId>android-data-sample-app</artifactId>
     <packaging>apk</packaging>
-    <name>Android Data Tests</name>
+    <name>Android Data Sample App</name>
 
     <dependencies>
         <dependency>
