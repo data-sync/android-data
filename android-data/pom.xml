@@ -25,6 +25,19 @@
             <scope>test</scope>
         </dependency>
 
+        <dependency>
+            <groupId>com.couchbase</groupId>
+            <artifactId>touchdb</artifactId>
+            <version>${touchdb.version}</version>
+            <type>apklib</type>
+        </dependency>
+
+        <dependency>
+            <groupId>com.couchbase</groupId>
+            <artifactId>touchdb-ektorp</artifactId>
+            <version>${touchdb.version}</version>
+            <type>apklib</type>
+        </dependency>
     </dependencies>
 
     <build>

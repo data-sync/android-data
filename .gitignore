@@ -5,3 +5,4 @@ project.properties
 target
 .idea
 *.iml
+android-data/gen-external-apklibs/

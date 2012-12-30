@@ -16,6 +16,7 @@
     <properties>
       <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
       <platform.version>4.0.1.2</platform.version>
+      <touchdb.version>59ddf37</touchdb.version>
     </properties>
 
     <dependencyManagement>
@@ -37,6 +38,14 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
+
+    <repositories>
+        <repository>
+            <id>local-repository</id>
+            <name>Local Checked in Repo</name>
+            <url>file://${project.basedir}/../repository</url>
+        </repository>
+    </repositories>
 
     <build>
         <pluginManagement>
