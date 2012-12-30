@@ -11,7 +11,7 @@
     <modules>
         <module>android-data</module>
         <module>android-data-tests</module>
-        <module>android-data-sample-app</module>
+        <!--<module>android-data-sample-app</module>-->
     </modules>
 
     <properties>
