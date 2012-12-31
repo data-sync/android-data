@@ -12,12 +12,12 @@
         <dependency>
             <groupId>org.ektorp</groupId>
             <artifactId>org.ektorp</artifactId>
-            <version>1.2.2</version>
+            <version>1.2.2.no-dep</version>
         </dependency>
         <dependency>
             <groupId>org.ektorp</groupId>
             <artifactId>org.ektorp.android</artifactId>
-            <version>1.2.2</version>
+            <version>1.2.2.no-dep</version>
         </dependency>
         <dependency>
             <groupId>commons-io</groupId>
