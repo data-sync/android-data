@@ -1,48 +1,46 @@
 package com.android.data;
 
-import android.content.Context;
-import android.test.InstrumentationTestCase;
+import android.content.Intent;
+import android.os.IBinder;
+import android.test.ServiceTestCase;
 import android.test.suitebuilder.annotation.MediumTest;
+import com.android.data.services.DataService;
 
-public class PersistenceTest extends InstrumentationTestCase {
+public class PersistenceTest extends ServiceTestCase<DataService> {
 
-    private Repository<DomainClass> repository;
+    private Repository<TestDocument> repository;
 
-    private static class DomainClass extends Document {
-        DomainClass() {}
-        private int attr1;
-        private int attr2;
-
-        private DomainClass(int attr1, int attr2) {
-            this.attr1 = attr1;
-            this.attr2 = attr2;
-        }
-
-        public int getAttr1() {
-            return attr1;
-        }
-
-        public int getAttr2() {
-            return attr2;
-        }
+    public PersistenceTest() {
+        super(DataService.class);
     }
 
-    protected void setUp() throws Exception {
+    @Override
+    public void setUp() throws Exception {
         super.setUp();
-        repository = new Repository<DomainClass>(DomainClass.class, new DataStore(getContext(), "test_db"));
+        IBinder binder = bindService(new Intent(getContext(), DataService.class));
+        DataService service = ((DataService.DataServiceBinder) binder).getService();
+        repository = new Repository<TestDocument>(TestDocument.class, service.getDataStore());
     }
 
     @MediumTest
     public void testSaveData() {
-        DomainClass data = new DomainClass(1, 2);
+        TestDocument data = new TestDocument(1, 2);
         repository.add(data);
 
-        DomainClass actualData = repository.get(data.getId());
+        TestDocument actualData = repository.get(data.getId());
         assertEquals(data.getAttr1(), actualData.getAttr1());
         assertEquals(data.getAttr2(), actualData.getAttr2());
     }
 
-    private Context getContext() {
-        return getInstrumentation().getContext();
+    @MediumTest
+    public void testUpdateData() {
+        TestDocument data = new TestDocument(1, 2);
+        repository.add(data);
+
+        data.setAttr1(3);
+        repository.update(data);
+
+        TestDocument actualData = repository.get(data.getId());
+        assertEquals(3, actualData.getAttr1());
     }
 }
