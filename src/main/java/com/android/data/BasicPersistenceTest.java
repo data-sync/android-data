@@ -1,27 +1,8 @@
 package com.android.data;
 
-import android.content.Intent;
-import android.os.IBinder;
-import android.test.ServiceTestCase;
 import android.test.suitebuilder.annotation.MediumTest;
-import com.android.data.services.DataService;
 
-public class PersistenceTest extends ServiceTestCase<DataService> {
-
-    private Repository<TestDocument> repository;
-
-    public PersistenceTest() {
-        super(DataService.class);
-    }
-
-    @Override
-    public void setUp() throws Exception {
-        super.setUp();
-        IBinder binder = bindService(new Intent(getContext(), DataService.class));
-        DataService service = ((DataService.DataServiceBinder) binder).getService();
-        repository = new Repository<TestDocument>(TestDocument.class, service.getDataStore());
-    }
-
+public class BasicPersistenceTest extends BaseTestCase {
     @MediumTest
     public void testSaveDocument() {
         TestDocument data = new TestDocument(1, 2);
