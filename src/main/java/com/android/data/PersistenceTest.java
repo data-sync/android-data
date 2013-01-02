@@ -23,7 +23,7 @@ public class PersistenceTest extends ServiceTestCase<DataService> {
     }
 
     @MediumTest
-    public void testSaveData() {
+    public void testSaveDocument() {
         TestDocument data = new TestDocument(1, 2);
         repository.add(data);
 
@@ -33,7 +33,7 @@ public class PersistenceTest extends ServiceTestCase<DataService> {
     }
 
     @MediumTest
-    public void testUpdateData() {
+    public void testUpdateDocument() {
         TestDocument data = new TestDocument(1, 2);
         repository.add(data);
 
@@ -42,5 +42,15 @@ public class PersistenceTest extends ServiceTestCase<DataService> {
 
         TestDocument actualData = repository.get(data.getId());
         assertEquals(3, actualData.getAttr1());
+    }
+
+    @MediumTest
+    public void testDeleteDocument() {
+        TestDocument data = new TestDocument(1, 2);
+        repository.add(data);
+
+        repository.remove(data);
+
+        assertFalse(repository.contains(data.getId()));
     }
 }
