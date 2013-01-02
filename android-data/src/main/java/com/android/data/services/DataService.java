@@ -6,6 +6,7 @@ import android.os.Binder;
 import android.os.IBinder;
 import com.android.data.DataStore;
 import com.android.data.exceptions.DataException;
+import com.couchbase.touchdb.TDDatabase;
 import com.couchbase.touchdb.TDServer;
 import com.couchbase.touchdb.ektorp.TouchDBHttpClient;
 import com.couchbase.touchdb.router.TDURLStreamHandlerFactory;
@@ -38,7 +39,8 @@ public class DataService extends Service {
             httpClient = new TouchDBHttpClient(server);
             StdCouchDbInstance dbInstance = new StdCouchDbInstance(httpClient);
             CouchDbConnector connector = dbInstance.createConnector(dbName, false);
-            dataStore = new DataStore(connector);
+            TDDatabase database = server.getDatabaseNamed(dbName);
+            dataStore = new DataStore(connector, database);
         } catch (IOException e) {
             throw new DataException(e);
         }
