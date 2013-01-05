@@ -38,19 +38,23 @@ public class DataStore {
         }
     }
 
-    public CouchDbConnector getConnector() {
+    protected CouchDbConnector getConnector() {
         return connector;
     }
 
-    public TDDatabase getDatabase() {
+    protected TDDatabase getDatabase() {
         return database;
     }
 
     private TDServer getServer(Context context) {
         try {
-            return new TDServer(context.getFilesDir().getAbsolutePath());
+            return new TDServer(getDBName(context));
         } catch (IOException e) {
             throw new DataException(e);
         }
+    }
+
+    private String getDBName(Context context) {
+        return context.getFilesDir().getAbsolutePath();
     }
 }
