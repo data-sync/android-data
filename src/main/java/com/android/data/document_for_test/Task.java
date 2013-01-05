@@ -33,4 +33,24 @@ public class Task extends Document {
     public void updateDescription(String description) {
         this.description = description;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Task task = (Task) o;
+
+        if (!createdDate.equals(task.createdDate)) return false;
+        if (!description.equals(task.description)) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = createdDate.hashCode();
+        result = 31 * result + description.hashCode();
+        return result;
+    }
 }
