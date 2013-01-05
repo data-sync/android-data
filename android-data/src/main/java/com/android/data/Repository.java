@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 import static java.lang.String.format;
+import static org.ektorp.impl.NameConventions.capitalize;
 
 public class Repository<T extends Document> extends CouchDbRepositorySupport<T> {
     public static final String DESIGN_DOCS = "designDocs";
@@ -46,7 +47,7 @@ public class Repository<T extends Document> extends CouchDbRepositorySupport<T> 
             }
         };
 
-        defineView("by".concat(fieldName), mapBlock);
+        defineView("by".concat(capitalize(fieldName)), mapBlock);
     }
 
     public List<T> byView(String viewName) throws IOException {
