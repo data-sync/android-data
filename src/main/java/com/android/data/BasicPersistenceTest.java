@@ -1,37 +1,40 @@
 package com.android.data;
 
 import android.test.suitebuilder.annotation.MediumTest;
+import com.android.data.document_for_test.Task;
+
+import java.util.Date;
 
 public class BasicPersistenceTest extends BaseTestCase {
     @MediumTest
     public void testSaveDocument() {
-        TestDocument data = new TestDocument(1, 2);
-        repository.add(data);
+        Task task = new Task("task1", new Date());
+        repository.add(task);
 
-        TestDocument actualData = repository.get(data.getId());
-        assertEquals(data.getAttr1(), actualData.getAttr1());
-        assertEquals(data.getAttr2(), actualData.getAttr2());
+        Task taskFromStore = repository.get(task.getId());
+        assertEquals(task.getDescription(), taskFromStore.getDescription());
+        assertEquals(task.getCreatedDate(), taskFromStore.getCreatedDate());
     }
 
     @MediumTest
     public void testUpdateDocument() {
-        TestDocument data = new TestDocument(1, 2);
-        repository.add(data);
+        Task task = new Task("task1", new Date());
+        repository.add(task);
 
-        data.setAttr1(3);
-        repository.update(data);
+        task.updateDescription("New Description");
+        repository.update(task);
 
-        TestDocument actualData = repository.get(data.getId());
-        assertEquals(3, actualData.getAttr1());
+        Task taskFromStore = repository.get(task.getId());
+        assertEquals("New Description", taskFromStore.getDescription());
     }
 
     @MediumTest
     public void testDeleteDocument() {
-        TestDocument data = new TestDocument(1, 2);
-        repository.add(data);
+        Task task = new Task("task1", new Date());
+        repository.add(task);
 
-        repository.remove(data);
+        repository.remove(task);
 
-        assertFalse(repository.contains(data.getId()));
+        assertFalse(repository.contains(task.getId()));
     }
 }
