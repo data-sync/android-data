@@ -15,7 +15,7 @@ public class DataListAdapterTest extends BaseTestCase {
 
     class TaskListAdapter extends DataListAdapter<Task> {
         public TaskListAdapter(Repository<Task> repository) {
-            super(repository, "byDescription", R.layout.simple_list_item_1, true, Task.class);
+            super(repository, "byDescription", R.layout.simple_list_item_1, true);
         }
 
         @Override

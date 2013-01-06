@@ -11,19 +11,19 @@ import org.ektorp.ViewResult;
 import org.ektorp.android.util.CouchbaseViewListAdapter;
 
 import java.io.IOException;
+import java.lang.reflect.ParameterizedType;
 
 public abstract class DataListAdapter<T extends Document> extends CouchbaseViewListAdapter {
     private final int layout;
-    private Class<T> type;
+    private static ObjectMapper mapper = new ObjectMapper();
 
-    public DataListAdapter(Repository<T> repository, ViewQuery viewQuery, int layout, boolean followChanges, Class<T> type) {
+    public DataListAdapter(Repository<T> repository, ViewQuery viewQuery, int layout, boolean followChanges) {
         super(repository.getConnector(), viewQuery, followChanges);
         this.layout = layout;
-        this.type = type; // TODO: Can TypeReference be used?
     }
 
-    public DataListAdapter(Repository<T> repository, String viewName, int layout, boolean followChanges, Class<T> type) {
-        this(repository, repository.buildViewQuery(viewName), layout, followChanges, type);
+    public DataListAdapter(Repository<T> repository, String viewName, int layout, boolean followChanges) {
+        this(repository, repository.buildViewQuery(viewName), layout, followChanges);
     }
 
     @Override
@@ -41,7 +41,7 @@ public abstract class DataListAdapter<T extends Document> extends CouchbaseViewL
     public T getDocument(int position) {
         try {
             ViewResult.Row row = getRow(position);
-            return (new ObjectMapper()).readValue(row.getValueAsNode(), type);
+            return mapper.readValue(row.getValueAsNode(), genericDocumentClass());
         } catch (IOException e) {
             Log.e(getClass().getName(), "Not able to de-serialize");
             return null;
@@ -55,6 +55,12 @@ public abstract class DataListAdapter<T extends Document> extends CouchbaseViewL
 
     private LayoutInflater getInflater(ViewGroup parent) {
         return (LayoutInflater) parent.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+    }
+
+    @SuppressWarnings("unchecked")
+    private Class<T> genericDocumentClass() {
+        ParameterizedType parameterizedType = (ParameterizedType) getClass().getGenericSuperclass();
+        return (Class<T>) parameterizedType.getActualTypeArguments()[0];
     }
 
     abstract View populateView(View view, T document);
