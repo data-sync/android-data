@@ -1,7 +1,7 @@
 package com.android.data;
 
 import android.test.suitebuilder.annotation.MediumTest;
-import com.android.data.document_for_test.Task;
+import com.android.data.models.Task;
 import com.couchbase.touchdb.TDViewMapBlock;
 import com.couchbase.touchdb.TDViewMapEmitBlock;
 import org.ektorp.ComplexKey;

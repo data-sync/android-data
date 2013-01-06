@@ -1,4 +1,4 @@
-package com.android.data.document_for_test;
+package com.android.data.models;
 
 import com.android.data.Document;
 import org.codehaus.jackson.annotate.JsonCreator;
@@ -52,13 +52,5 @@ public class Task extends Document {
         int result = createdDate.hashCode();
         result = 31 * result + description.hashCode();
         return result;
-    }
-
-    @Override
-    public String toString() {
-        return "Task{" +
-                "createdDate=" + createdDate +
-                ", description='" + description + '\'' +
-                '}';
     }
 }

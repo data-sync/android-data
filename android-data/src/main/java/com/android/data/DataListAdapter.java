@@ -63,5 +63,5 @@ public abstract class DataListAdapter<T extends Document> extends CouchbaseViewL
         return (Class<T>) parameterizedType.getActualTypeArguments()[0];
     }
 
-    abstract View populateView(View view, T document);
+    abstract public void populateView(View view, T document);
 }
