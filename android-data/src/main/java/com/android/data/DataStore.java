@@ -12,19 +12,19 @@ import org.ektorp.impl.StdCouchDbInstance;
 import java.io.IOException;
 
 public class DataStore {
-    {
+    static {
         TDURLStreamHandlerFactory.registerSelfIgnoreError();
     }
 
     private final CouchDbConnector connector;
     private final TDDatabase database;
-    private TDServer server;
-    private TouchDBHttpClient httpClient;
+    private final TDServer server;
+    private final TouchDBHttpClient httpClient;
 
-    public DataStore(Context context, String dbName) {
+    public DataStore(final Context context, final String dbName) {
         server = getServer(context);
         httpClient = new TouchDBHttpClient(server);
-        StdCouchDbInstance dbInstance = new StdCouchDbInstance(httpClient);
+        final StdCouchDbInstance dbInstance = new StdCouchDbInstance(httpClient);
         connector = dbInstance.createConnector(dbName, true);
         database = server.getDatabaseNamed(dbName);
     }
@@ -46,7 +46,7 @@ public class DataStore {
         return database;
     }
 
-    private TDServer getServer(Context context) {
+    private TDServer getServer(final Context context) {
         try {
             return new TDServer(getDBName(context));
         } catch (IOException e) {
@@ -54,7 +54,7 @@ public class DataStore {
         }
     }
 
-    private String getDBName(Context context) {
+    private String getDBName(final Context context) {
         return context.getFilesDir().getAbsolutePath();
     }
 }
