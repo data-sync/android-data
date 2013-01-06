@@ -53,4 +53,12 @@ public class Task extends Document {
         result = 31 * result + description.hashCode();
         return result;
     }
+
+    @Override
+    public String toString() {
+        return "Task{" +
+                "createdDate=" + createdDate +
+                ", description='" + description + '\'' +
+                '}';
+    }
 }

@@ -1,13 +1,10 @@
 package com.android.data;
 
 import com.couchbase.touchdb.*;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.ektorp.ViewQuery;
-import org.ektorp.ViewResult;
 import org.ektorp.support.CouchDbRepositorySupport;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -24,7 +21,7 @@ public class Repository<T extends Document> extends CouchDbRepositorySupport<T> 
     }
 
     public void defineView(String viewName, TDViewMapBlock mapBlock, TDViewReduceBlock reduceBlock, String version) {
-        TDView view = database.getViewNamed(format("%s/%s", DESIGN_DOCS, viewName));
+        TDView view = database.getViewNamed(format("%s/%s", type.getSimpleName(), viewName));
         view.setMapReduceBlocks(mapBlock, reduceBlock, version);
     }
 
@@ -50,17 +47,12 @@ public class Repository<T extends Document> extends CouchDbRepositorySupport<T> 
         defineView("by".concat(capitalize(fieldName)), mapBlock);
     }
 
-    public List<T> byView(String viewName) throws IOException {
-        ViewQuery viewQuery = new ViewQuery().designDocId(format("%s/%s", "_design", DESIGN_DOCS)).viewName(viewName).descending(true);
-        //TODO: Why db.queryView(viewQuery, type) is not working??
-        ViewResult result = db.queryView(viewQuery);
-        List<ViewResult.Row> rows = result.getRows();
-        List<T> objects = new ArrayList<T>();
-        for (ViewResult.Row row : rows) {
-            T object = (new ObjectMapper()).readValue(row.getValueAsNode(), type);
-            objects.add(object);
-        }
-        return objects;
+    public List<T> query(String byViewName) throws IOException {
+        return queryView(byViewName);
+    }
+
+    public List<T> query(ViewQuery viewQuery) throws IOException {
+        return db.queryView(viewQuery, type);
     }
 
     public TDDatabase getDatabase() {
