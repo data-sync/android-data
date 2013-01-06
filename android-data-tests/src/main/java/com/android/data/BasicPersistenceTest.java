@@ -9,9 +9,9 @@ public class BasicPersistenceTest extends BaseTestCase {
     @MediumTest
     public void testSaveDocument() {
         Task task = new Task("task1", new Date());
-        repository.add(task);
+        taskRepository.add(task);
 
-        Task taskFromStore = repository.get(task.getId());
+        Task taskFromStore = taskRepository.get(task.getId());
         assertEquals(task.getDescription(), taskFromStore.getDescription());
         assertEquals(task.getCreatedDate(), taskFromStore.getCreatedDate());
     }
@@ -19,22 +19,22 @@ public class BasicPersistenceTest extends BaseTestCase {
     @MediumTest
     public void testUpdateDocument() {
         Task task = new Task("task1", new Date());
-        repository.add(task);
+        taskRepository.add(task);
 
         task.updateDescription("New Description");
-        repository.update(task);
+        taskRepository.update(task);
 
-        Task taskFromStore = repository.get(task.getId());
+        Task taskFromStore = taskRepository.get(task.getId());
         assertEquals("New Description", taskFromStore.getDescription());
     }
 
     @MediumTest
     public void testDeleteDocument() {
         Task task = new Task("task1", new Date());
-        repository.add(task);
+        taskRepository.add(task);
 
-        repository.remove(task);
+        taskRepository.remove(task);
 
-        assertFalse(repository.contains(task.getId()));
+        assertFalse(taskRepository.contains(task.getId()));
     }
 }

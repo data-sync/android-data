@@ -1,10 +1,11 @@
 package com.android.data;
 
+import android.util.Log;
 import com.couchbase.touchdb.*;
+import org.ektorp.ComplexKey;
 import org.ektorp.ViewQuery;
 import org.ektorp.support.CouchDbRepositorySupport;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -12,7 +13,6 @@ import static java.lang.String.format;
 import static org.ektorp.impl.NameConventions.capitalize;
 
 public class Repository<T extends Document> extends CouchDbRepositorySupport<T> {
-    public static final String DESIGN_DOCS = "designDocs";
     private final TDDatabase database;
 
     protected Repository(Class<T> type, DataStore dataStore) {
@@ -47,16 +47,25 @@ public class Repository<T extends Document> extends CouchDbRepositorySupport<T> 
         defineView("by".concat(capitalize(fieldName)), mapBlock);
     }
 
-    public List<T> query(String byViewName) throws IOException {
-        return queryView(byViewName);
+    public List<T> query(String viewName) {
+        return queryView(viewName);
     }
 
-    public List<T> query(ViewQuery viewQuery) throws IOException {
+    public List<T> query(String viewName, Object key) {
+        return query(buildViewQuery(viewName).key(key));
+    }
+
+    public List<T> query(String viewName, ComplexKey key) {
+        return queryView(viewName, key);
+    }
+
+    public List<T> query(ViewQuery viewQuery) {
+        Log.d(getClass().getName(), viewQuery.buildQuery());
         return db.queryView(viewQuery, type);
     }
 
-    public TDDatabase getDatabase() {
-        return database;
+    public ViewQuery buildViewQuery(String viewName) {
+        return createQuery(viewName).includeDocs(true);
     }
 
     public void reset() {
