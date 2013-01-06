@@ -3,6 +3,7 @@ package com.android.data;
 import android.util.Log;
 import com.couchbase.touchdb.*;
 import org.ektorp.ComplexKey;
+import org.ektorp.CouchDbConnector;
 import org.ektorp.ViewQuery;
 import org.ektorp.support.CouchDbRepositorySupport;
 
@@ -71,5 +72,9 @@ public class Repository<T extends Document> extends CouchDbRepositorySupport<T> 
     public void reset() {
         database.deleteDatabase();
         db.createDatabaseIfNotExists();
+    }
+
+    public CouchDbConnector getConnector() {
+        return db;
     }
 }
