@@ -16,8 +16,8 @@ public class FindByViewTest extends BaseTestCase {
         repository.add(task1);
         repository.add(task2);
 
-        List<Task> tasks = repository.byView("byDescription");
+        List<Task> tasks = repository.query("byDescription");
         assertEquals(2, tasks.size());
-        assertEquals(Arrays.asList(task2, task1), tasks);
+        assertEquals(Arrays.asList(task1, task2), tasks);
     }
 }
