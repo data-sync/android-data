@@ -40,9 +40,8 @@
 
     <repositories>
         <repository>
-            <id>local-repository</id>
-            <name>Local Checked in Repo</name>
-            <url>file://${project.basedir}/repository</url>
+            <id>selvakn-snapshots</id>
+            <url>https://github.com/selvakn/mvn-repository/tree/master/</url>
         </repository>
     </repositories>
 
