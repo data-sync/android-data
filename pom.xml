@@ -2,16 +2,12 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>com.android.data</groupId>
-    <artifactId>data-parent</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
-    <packaging>pom</packaging>
-    <name>Android Data Parent</name>
 
-    <modules>
-        <module>android-data</module>
-        <module>android-data-tests</module>
-    </modules>
+    <groupId>com.android.data</groupId>
+    <artifactId>android-data</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+    <packaging>apklib</packaging>
+    <name>Android Data</name>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -19,35 +15,45 @@
         <touchdb.version>59ddf37</touchdb.version>
     </properties>
 
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>junit</groupId>
-                <artifactId>junit</artifactId>
-                <version>4.8.1</version>
-            </dependency>
-            <dependency>
-                <groupId>com.google.android</groupId>
-                <artifactId>android</artifactId>
-                <version>${platform.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.google.android</groupId>
-                <artifactId>android-test</artifactId>
-                <version>${platform.version}</version>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
+    <dependencies>
+        <dependency>
+            <groupId>com.google.android</groupId>
+            <artifactId>android</artifactId>
+            <version>${platform.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.couchbase</groupId>
+            <artifactId>touchdb</artifactId>
+            <version>${touchdb.version}</version>
+            <type>apklib</type>
+        </dependency>
+
+        <dependency>
+            <groupId>com.couchbase</groupId>
+            <artifactId>touchdb-ektorp</artifactId>
+            <version>${touchdb.version}</version>
+            <type>apklib</type>
+        </dependency>
+    </dependencies>
 
     <repositories>
         <repository>
             <id>local-repository</id>
             <name>Local Checked in Repo</name>
-            <url>file://${project.basedir}/../repository</url>
+            <url>file://${project.basedir}/repository</url>
         </repository>
     </repositories>
 
     <build>
+        <plugins>
+            <plugin>
+                <groupId>com.jayway.maven.plugins.android.generation2</groupId>
+                <artifactId>android-maven-plugin</artifactId>
+                <extensions>true</extensions>
+            </plugin>
+        </plugins>
         <pluginManagement>
             <plugins>
                 <plugin>
@@ -67,4 +73,3 @@
     </build>
 
 </project>
-
