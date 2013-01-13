@@ -22,7 +22,7 @@ public class BaseTestCase extends InstrumentationTestCase {
     }
 
     protected void sleepEnoughForAdapterToReQuery() throws InterruptedException {
-        Thread.sleep(100);
+        Thread.sleep(500);
     }
 
     protected Context getContext() {
