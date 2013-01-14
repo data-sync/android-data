@@ -24,7 +24,7 @@ public class DataListAdapterTest extends BaseTestCase {
     @MediumTest
     public void testGetItem() {
         assertEquals(1, dataListAdapter.getCount());
-        assertEquals(task1, dataListAdapter.getDocument(0));
+        assertEquals(task1, dataListAdapter.getItem(0));
     }
 
     @MediumTest
