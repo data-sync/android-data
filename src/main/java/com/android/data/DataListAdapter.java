@@ -27,6 +27,11 @@ public abstract class DataListAdapter<T extends Document> extends CouchbaseViewL
     }
 
     @Override
+    public ViewResult.Row getRow(int position) {
+        return listRows.get(position);
+    }
+
+    @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         View view;
         if (convertView == null) {
@@ -34,11 +39,12 @@ public abstract class DataListAdapter<T extends Document> extends CouchbaseViewL
         } else {
             view = convertView;
         }
-        populateView(view, getDocument(position));
+        populateView(view, getItem(position));
         return view;
     }
 
-    public T getDocument(int position) {
+    @Override
+    public T getItem(int position) {
         try {
             ViewResult.Row row = getRow(position);
             return mapper.readValue(row.getValueAsNode(), genericDocumentClass());

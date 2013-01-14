@@ -16,7 +16,7 @@ import static org.ektorp.impl.NameConventions.capitalize;
 public class Repository<T extends Document> extends CouchDbRepositorySupport<T> {
     private final TDDatabase database;
 
-    protected Repository(Class<T> type, DataStore dataStore) {
+    public Repository(Class<T> type, DataStore dataStore) {
         super(type, dataStore.getConnector());
         database = dataStore.getDatabase();
     }
