@@ -10,7 +10,7 @@ public class BaseTestCase extends InstrumentationTestCase {
 
     @Override
     public void setUp() throws Exception {
-        dataStore = new DataStore(getInstrumentation().getContext(), "test.db");
+        dataStore = new DataStore(getInstrumentation().getContext(), "test.db", false);
         taskRepository = new Repository<Task>(Task.class, dataStore);
         taskRepository.reset();
     }
