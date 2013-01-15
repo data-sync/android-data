@@ -1,6 +1,5 @@
 package com.android.data;
 
-import android.content.Context;
 import android.test.InstrumentationTestCase;
 import com.android.data.models.Task;
 
@@ -10,7 +9,7 @@ public class BaseTestCase extends InstrumentationTestCase {
 
     @Override
     public void setUp() throws Exception {
-        dataStore = new DataStore(getInstrumentation().getContext(), "test.db", false);
+        dataStore = new DataStore(getInstrumentation().getContext(), "test.db");
         taskRepository = new Repository<Task>(Task.class, dataStore);
         taskRepository.reset();
     }
@@ -25,7 +24,4 @@ public class BaseTestCase extends InstrumentationTestCase {
         Thread.sleep(500);
     }
 
-    protected Context getContext() {
-        return getInstrumentation().getContext();
-    }
 }

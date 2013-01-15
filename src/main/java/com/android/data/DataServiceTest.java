@@ -5,7 +5,6 @@ import android.os.IBinder;
 import android.test.ServiceTestCase;
 import android.test.suitebuilder.annotation.MediumTest;
 import com.android.data.models.Task;
-import com.android.data.services.DataService;
 
 public class DataServiceTest extends ServiceTestCase<DataService> {
     public DataServiceTest() {
