@@ -125,7 +125,7 @@ public class DataStore {
          "forGroups"
          "function(doc, req) {
             var sharedWith = doc.forGroups;
-            var requestFor = eval(req.query.forGroups);
+            var requestFor = JSON.parse(req.query.forGroups);
             if((typeof sharedWith === "undefined") || (sharedWith.length === 0)) {
                 return true;
             }
@@ -141,7 +141,7 @@ public class DataStore {
         Map<String, String> filters = new HashMap<String, String>();
         filters.put("forGroups", "function(doc, req) {\n" +
                 "            var sharedWith = doc.forGroups;\n" +
-                "            var requestFor = eval(req.query.forGroups);\n" +
+                "            var requestFor = JSON.parse(req.query.forGroups);\n" +
                 "            if((typeof sharedWith === \"undefined\") || (sharedWith.length === 0)) {\n" +
                 "                return true;\n" +
                 "            }\n" +
