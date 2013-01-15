@@ -7,14 +7,19 @@ import com.couchbase.touchdb.TDDatabase;
 import com.couchbase.touchdb.TDServer;
 import com.couchbase.touchdb.ektorp.TouchDBHttpClient;
 import com.couchbase.touchdb.router.TDURLStreamHandlerFactory;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.node.JsonNodeFactory;
+import org.codehaus.jackson.node.ObjectNode;
 import org.ektorp.CouchDbConnector;
 import org.ektorp.CouchDbInstance;
-import org.ektorp.DbAccessException;
 import org.ektorp.ReplicationCommand;
 import org.ektorp.android.util.EktorpAsyncTask;
 import org.ektorp.impl.StdCouchDbInstance;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 public class DataStore {
     static {
@@ -28,22 +33,13 @@ public class DataStore {
     private final String dbName;
     private final CouchDbInstance dbInstance;
 
-    public DataStore(final Context context, final String dbName, boolean isReplicationEnabled) {
+    public DataStore(final Context context, final String dbName) {
         this.dbName = dbName;
         server = getServer(context);
         httpClient = new TouchDBHttpClient(server);
         dbInstance = new StdCouchDbInstance(httpClient);
         connector = dbInstance.createConnector(dbName, true);
         database = server.getDatabaseNamed(dbName);
-
-        if (isReplicationEnabled) {
-//            replicate("http://10.0.2.2:5984/data-test");
-            replicate("http://couchdb.selvakn.in/data-test");
-        }
-    }
-
-    public DataStore(final Context context, final String dbName) {
-        this(context, dbName, true);
     }
 
     public void close() {
@@ -75,7 +71,7 @@ public class DataStore {
         return context.getFilesDir().getAbsolutePath();
     }
 
-    private void replicate(String remoteDB) {
+    protected void replicate(String remoteDB, Set<String> userGroupsToReplicate) {
         final ReplicationCommand pushCommand = new ReplicationCommand.Builder()
                 .source(dbName)
                 .target(remoteDB)
@@ -87,28 +83,83 @@ public class DataStore {
             protected void doInBackground() {
                 dbInstance.replicate(pushCommand);
             }
-
-            @Override
-            protected void onDbAccessException(DbAccessException dbAccessException) {
-                Log.e(getClass().getName(), "DB exception: " + dbAccessException);
-            }
         };
 
         pushReplication.execute();
 
-        final ReplicationCommand pullCommand = new ReplicationCommand.Builder()
-                .source(remoteDB)
-                .target(dbName)
-                .continuous(true)
-                .build();
+        updateDesignDocForReplication();
 
-        EktorpAsyncTask pullReplication = new EktorpAsyncTask() {
-            @Override
-            protected void doInBackground() {
-                dbInstance.replicate(pullCommand);
+        HashMap<String, String> pullReplicationQueryParams = new HashMap<String, String>();
+        try {
+            pullReplicationQueryParams.put("forGroups", new ObjectMapper().writeValueAsString(userGroupsToReplicate));
+            final ReplicationCommand pullCommand = new ReplicationCommand.Builder()
+                    .source(remoteDB)
+                    .target(dbName)
+                    .continuous(true)
+                    .filter("data/forGroups")
+                    .queryParams(pullReplicationQueryParams)
+                    .build();
+
+            EktorpAsyncTask pullReplication = new EktorpAsyncTask() {
+                @Override
+                protected void doInBackground() {
+                    dbInstance.replicate(pullCommand);
+                }
+            };
+
+            pullReplication.execute();
+        } catch (IOException e) {
+            Log.e(getClass().getName(), "Pull Replication failed because of: " + e);
+        }
+    }
+
+    private void updateDesignDocForReplication() {
+        String designDocId = "_design/data";
+        ObjectNode designDoc = connector.find(ObjectNode.class, designDocId);
+        boolean isDesignDocExisting = (designDoc != null);
+        if (!isDesignDocExisting) {
+            designDoc = new ObjectNode(JsonNodeFactory.instance);
+        }
+
+        /**
+         "forGroups"
+         "function(doc, req) {
+            var sharedWith = doc.forGroups;
+            var requestFor = eval(req.query.forGroups);
+            if((typeof sharedWith === "undefined") || (sharedWith.length === 0)) {
+                return true;
             }
-        };
+            for(var i = 0; i < requestFor.length; i++) {
+                if(sharedWith.indexOf(requestFor[i]) != -1) {
+                    return true;
+                }
+            }
+            return false;
+         }"
+         */
 
-        pullReplication.execute();
+        Map<String, String> filters = new HashMap<String, String>();
+        filters.put("forGroups", "function(doc, req) {\n" +
+                "            var sharedWith = doc.forGroups;\n" +
+                "            var requestFor = eval(req.query.forGroups);\n" +
+                "            if((typeof sharedWith === \"undefined\") || (sharedWith.length === 0)) {\n" +
+                "                return true;\n" +
+                "            }\n" +
+                "            for(var i = 0; i < requestFor.length; i++) {\n" +
+                "                if(sharedWith.indexOf(requestFor[i]) != -1) {\n" +
+                "                    return true;\n" +
+                "                }\n" +
+                "            }\n" +
+                "            return false;\n" +
+                "         }");
+
+        designDoc.putPOJO("filters", filters);
+        if (isDesignDocExisting) {
+            connector.update(designDoc);
+        } else {
+            connector.create(designDocId, designDoc);
+        }
     }
 }
+
+

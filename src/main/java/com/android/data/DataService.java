@@ -1,16 +1,25 @@
-package com.android.data.services;
+package com.android.data;
 
 import android.app.Service;
 import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
-import com.android.data.DataStore;
+
+import java.util.HashSet;
+import java.util.Set;
 
 public class DataService extends Service {
+    public static final String GROUPS = "groups";
     private final IBinder binder = new DataServiceBinder();
     private DataStore dataStore;
+    private boolean isReplicationRunning = false;
 
     public IBinder onBind(Intent intent) {
+        if(!isReplicationRunning){
+            Set<String> groups = (HashSet<String>) intent.getSerializableExtra(GROUPS);
+            dataStore.replicate("http://10.0.2.2:5984/data-test", groups);
+            isReplicationRunning = true;
+        }
         return binder;
     }
 
