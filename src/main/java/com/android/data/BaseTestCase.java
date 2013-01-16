@@ -23,5 +23,4 @@ public class BaseTestCase extends InstrumentationTestCase {
     protected void sleepEnoughForAdapterToReQuery() throws InterruptedException {
         Thread.sleep(500);
     }
-
 }
