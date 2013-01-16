@@ -9,15 +9,20 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class DataService extends Service {
-    public static final String GROUPS = "groups";
+    public static final String GROUPS = "GROUPS";
+    public static final String REMOTE_DB = "REMOTE_DB";
+    public static final String DEFAULT_REMOTE_DB = "http://10.0.2.2:5984/data-test";
+
     private final IBinder binder = new DataServiceBinder();
     private DataStore dataStore;
     private boolean isReplicationRunning = false;
 
     public IBinder onBind(Intent intent) {
-        if(!isReplicationRunning){
+        if (!isReplicationRunning) {
+            @SuppressWarnings("unchecked")
             Set<String> groups = (HashSet<String>) intent.getSerializableExtra(GROUPS);
-            dataStore.replicate("http://10.0.2.2:5984/data-test", groups);
+            String remoteDB = intent.getExtras().getString(REMOTE_DB, DEFAULT_REMOTE_DB);
+            dataStore.replicate(remoteDB, groups);
             isReplicationRunning = true;
         }
         return binder;
