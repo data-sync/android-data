@@ -13,7 +13,9 @@ public class DataServiceTest extends ServiceTestCase<DataService> {
 
     @MediumTest
     public void testGetDataStoreFromService() {
-        IBinder binder = bindService(new Intent(getContext(), DataService.class));
+        Intent intent = new Intent(getContext(), DataService.class);
+        intent.putExtra(DataService.REMOTE_DB, DataService.DEFAULT_REMOTE_DB);
+        IBinder binder = bindService(intent);
         DataService service = ((DataService.DataServiceBinder) binder).getService();
         DataStore dataStore = service.getDataStore();
         Repository<Task> repository = new Repository<Task>(Task.class, dataStore);
