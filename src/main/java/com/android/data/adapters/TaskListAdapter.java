@@ -12,7 +12,7 @@ public class TaskListAdapter extends DataListAdapter<Task> {
     }
 
     @Override
-    public void populateView(View view, Task document) {
+    public void populateView(View view, Task document, int position) {
         ((TextView) view).setText(document.getDescription());
     }
 }
