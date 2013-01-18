@@ -46,7 +46,7 @@ public abstract class DataListAdapter<T extends Document> extends CouchbaseViewL
         } else {
             view = convertView;
         }
-        populateView(view, getItem(position));
+        populateView(view, getItem(position), position);
         return view;
     }
 
@@ -152,5 +152,5 @@ public abstract class DataListAdapter<T extends Document> extends CouchbaseViewL
 
     // END
 
-    abstract public void populateView(View view, T document);
+    abstract public void populateView(View view, T document, int position);
 }
