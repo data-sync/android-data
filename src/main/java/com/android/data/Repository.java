@@ -1,5 +1,6 @@
 package com.android.data;
 
+import android.os.AsyncTask;
 import android.util.Log;
 import com.couchbase.touchdb.*;
 import org.ektorp.*;
@@ -93,7 +94,7 @@ public class Repository<T extends Document> extends CouchDbRepositorySupport<T> 
                 }
             }
         };
-        changesFeedAsyncTask.execute();
+        changesFeedAsyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         observers.put(observer, changesFeedAsyncTask);
     }
 
