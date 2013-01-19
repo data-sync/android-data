@@ -18,7 +18,7 @@ public class DataListAdapterTest extends BaseTestCase {
         taskRepository.add(task1);
         taskRepository.defineViewBy("description");
         dataListAdapter = new TaskListAdapter(taskRepository);
-        sleepEnoughForAdapterToReQuery();
+        sleepEnoughForChangesToBeFollowed();
     }
 
     @MediumTest
@@ -31,7 +31,7 @@ public class DataListAdapterTest extends BaseTestCase {
     public void testFollowChanges() throws InterruptedException {
         assertEquals(1, dataListAdapter.getCount());
         taskRepository.add(new Task("new task"));
-        sleepEnoughForAdapterToReQuery();
+        sleepEnoughForChangesToBeFollowed();
         assertEquals(2, dataListAdapter.getCount());
     }
 }

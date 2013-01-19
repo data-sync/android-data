@@ -19,6 +19,10 @@
             <id>selvakn-snapshots</id>
             <url>https://github.com/selvakn/mvn-repository/tree/master/</url>
         </repository>
+        <repository>
+            <id>sonatype</id>
+            <url>https://oss.sonatype.org/content/repositories/releases/</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -41,6 +45,18 @@
             <artifactId>android-data</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <type>apklib</type>
+        </dependency>
+
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <version>1.9.5</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.dexmaker</groupId>
+            <artifactId>dexmaker-mockito</artifactId>
+            <version>0.9</version>
         </dependency>
     </dependencies>
 

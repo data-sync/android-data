@@ -20,7 +20,7 @@ public class BaseTestCase extends InstrumentationTestCase {
         super.tearDown();
     }
 
-    protected void sleepEnoughForAdapterToReQuery() throws InterruptedException {
+    protected void sleepEnoughForChangesToBeFollowed() throws InterruptedException {
         Thread.sleep(500);
     }
 }

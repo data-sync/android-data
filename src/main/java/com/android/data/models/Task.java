@@ -6,7 +6,7 @@ import org.codehaus.jackson.annotate.JsonProperty;
 
 import java.util.Date;
 
-public class Task extends Document {
+public class Task extends Document<Task> {
     private Date createdDate;
 
     private String description;
@@ -14,6 +14,7 @@ public class Task extends Document {
     @JsonCreator
     public Task(@JsonProperty("description") String description,
                 @JsonProperty("createdDate") Date createdDate) {
+        super(Task.class);
         this.description = description;
         this.createdDate = createdDate;
     }
