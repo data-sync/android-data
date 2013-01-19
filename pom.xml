@@ -41,7 +41,7 @@
     <repositories>
         <repository>
             <id>selvakn-snapshots</id>
-            <url>https://github.com/selvakn/mvn-repository/tree/master/</url>
+            <url>https://github.com/selvakn/mvn-repository/raw/master/</url>
         </repository>
     </repositories>
 
