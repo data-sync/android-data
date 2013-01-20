@@ -6,7 +6,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 
 import java.io.IOException;
 
-public class DataJsonHelper {
+public class DataHelper {
     private static ObjectMapper mapper = new ObjectMapper();
 
     public static <T> T fromJson(final String json, final Class<T> cls) {
@@ -25,6 +25,14 @@ public class DataJsonHelper {
                 return mapper.readValue(jsonNode, cls);
             }
         }.handle();
+    }
+
+    public static String byTypeName(Class<? extends Document> cls) {
+        return "by" + typeName(cls);
+    }
+
+    public static String typeName(Class<? extends Document> cls) {
+        return cls.getSimpleName();
     }
 
     private static abstract class IODataExceptionHandler<T> {

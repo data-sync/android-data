@@ -3,7 +3,10 @@ package com.android.data;
 import android.os.AsyncTask;
 import android.util.Log;
 import com.couchbase.touchdb.*;
-import org.ektorp.*;
+import org.ektorp.ComplexKey;
+import org.ektorp.CouchDbConnector;
+import org.ektorp.Options;
+import org.ektorp.ViewQuery;
 import org.ektorp.android.util.ChangesFeedAsyncTask;
 import org.ektorp.changes.ChangesCommand;
 import org.ektorp.changes.DocumentChange;
@@ -13,7 +16,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.android.data.DataJsonHelper.fromJson;
+import static com.android.data.DataHelper.*;
 import static java.lang.String.format;
 import static org.ektorp.impl.NameConventions.capitalize;
 
@@ -28,7 +31,7 @@ public class Repository<T extends Document> extends CouchDbRepositorySupport<T> 
     }
 
     public void defineView(String viewName, TDViewMapBlock mapBlock, TDViewReduceBlock reduceBlock, String version) {
-        TDView view = database.getViewNamed(format("%s/%s", typeName(), viewName));
+        TDView view = database.getViewNamed(format("%s/%s", typeName(type), viewName));
         view.setMapReduceBlocks(mapBlock, reduceBlock, version);
     }
 
@@ -81,7 +84,7 @@ public class Repository<T extends Document> extends CouchDbRepositorySupport<T> 
         final ChangesCommand command = new ChangesCommand.Builder()
                 .continuous(true)
                 .since(documentWithSequence.getSequence())
-                .filter(byTypeName())
+                .filter(byTypeName(type))
                 .heartbeat(5000)
                 .includeDocs(true)
                 .build();
@@ -112,19 +115,11 @@ public class Repository<T extends Document> extends CouchDbRepositorySupport<T> 
         return db;
     }
 
-    private String byTypeName() {
-        return "by" + typeName();
-    }
-
-    private String typeName() {
-        return type.getSimpleName();
-    }
-
     private void installTypeFilters() {
-        database.defineFilter(byTypeName(), new TDFilterBlock() {
+        database.defineFilter(byTypeName(type), new TDFilterBlock() {
             @Override
             public boolean filter(TDRevision revision) {
-                return typeName().equals(revision.getProperties().get("type"));
+                return revision.isDeleted() || typeName(type).equals(revision.getProperties().get("type"));
             }
         });
     }
