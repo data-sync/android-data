@@ -28,10 +28,19 @@ public class DataListAdapterTest extends BaseTestCase {
     }
 
     @MediumTest
-    public void testFollowChanges() throws InterruptedException {
+    public void testFollowAdditions() throws InterruptedException {
         assertEquals(1, dataListAdapter.getCount());
         taskRepository.add(new Task("new task"));
         sleepEnoughForChangesToBeFollowed();
         assertEquals(2, dataListAdapter.getCount());
+    }
+
+    @MediumTest
+    public void testFollowDeletions() throws InterruptedException {
+        assertEquals(1, dataListAdapter.getCount());
+        taskRepository.remove(task1);
+
+        sleepEnoughForChangesToBeFollowed();
+        assertEquals(0, dataListAdapter.getCount());
     }
 }
