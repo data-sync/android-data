@@ -17,8 +17,7 @@ import org.ektorp.changes.DocumentChange;
 
 import java.lang.reflect.ParameterizedType;
 
-import static com.android.data.DataHelper.byTypeName;
-import static com.android.data.DataHelper.fromJson;
+import static com.android.data.DataHelper.*;
 
 public abstract class DataListAdapter<T extends Document> extends CouchbaseViewListAdapter {
     private final int layout;

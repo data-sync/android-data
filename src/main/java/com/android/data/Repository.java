@@ -15,8 +15,10 @@ import org.ektorp.support.CouchDbRepositorySupport;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 
-import static com.android.data.DataHelper.*;
+import static com.android.data.DataHelper.byTypeName;
+import static com.android.data.DataHelper.typeName;
 import static java.lang.String.format;
 import static org.ektorp.impl.NameConventions.capitalize;
 
@@ -78,6 +80,17 @@ public class Repository<T extends Document> extends CouchDbRepositorySupport<T> 
         return createQuery(viewName).includeDocs(true);
     }
 
+    public void registerContentObserver(ChangesCommand command, final ContentObserver<T> observer) {
+        final AtomicReference<ChangesFeedAsyncTask> changesFeedAsyncTask = new AtomicReference<ChangesFeedAsyncTask>(new ChangesFeedAsyncTask(db, command) {
+            @Override
+            protected void handleDocumentChange(DocumentChange change) {
+                observer.onChange(DataHelper.fromJson(change.getDoc(), type));
+            }
+        });
+        changesFeedAsyncTask.get().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        observers.put(observer, changesFeedAsyncTask.get());
+    }
+
     public void registerDocumentObserver(T document, final ContentObserver<T> observer) {
         final String docId = document.getId();
         T documentWithSequence = get(docId, new Options().param("local_seq", "true"));
@@ -89,16 +102,14 @@ public class Repository<T extends Document> extends CouchDbRepositorySupport<T> 
                 .includeDocs(true)
                 .build();
 
-        final ChangesFeedAsyncTask changesFeedAsyncTask = new ChangesFeedAsyncTask(db, command) {
+        registerContentObserver(command, new ContentObserver<T>() {
             @Override
-            protected void handleDocumentChange(DocumentChange change) {
-                if(docId.equals(change.getId())) {
-                    observer.onChange(fromJson(change.getDoc(), type));
+            public void onChange(T changedDocument) {
+                if(docId.equals(changedDocument.getId())) {
+                    observer.onChange(changedDocument);
                 }
             }
-        };
-        changesFeedAsyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-        observers.put(observer, changesFeedAsyncTask);
+        });
     }
 
     public void unregisterContentObserver(final ContentObserver<T> observer) {

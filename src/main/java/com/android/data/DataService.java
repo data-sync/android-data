@@ -4,6 +4,8 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
+import com.android.data.notification.NotificationDocument;
+import com.android.data.notification.NotificationObserver;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -33,6 +35,7 @@ public class DataService extends Service {
         super.onCreate();
         String dbName = getPackageName();
         dataStore = new DataStore(this, dbName);
+//        listenForNotifications();
     }
 
     @Override
@@ -51,5 +54,11 @@ public class DataService extends Service {
 
     public DataStore getDataStore() {
         return dataStore;
+    }
+
+    private void listenForNotifications() {
+        Repository<NotificationDocument> notificationRepo = new Repository<NotificationDocument>(NotificationDocument.class, dataStore);
+        NotificationObserver notificationObserver = new NotificationObserver(this);
+        notificationRepo.registerContentObserver(notificationObserver.changesCommandToFollow(), notificationObserver);
     }
 }
