@@ -3,10 +3,7 @@ package com.android.data;
 import android.os.AsyncTask;
 import android.util.Log;
 import com.couchbase.touchdb.*;
-import org.ektorp.ComplexKey;
-import org.ektorp.CouchDbConnector;
-import org.ektorp.Options;
-import org.ektorp.ViewQuery;
+import org.ektorp.*;
 import org.ektorp.android.util.ChangesFeedAsyncTask;
 import org.ektorp.changes.ChangesCommand;
 import org.ektorp.changes.DocumentChange;
@@ -15,7 +12,6 @@ import org.ektorp.support.CouchDbRepositorySupport;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicReference;
 
 import static com.android.data.DataHelper.byTypeName;
 import static com.android.data.DataHelper.typeName;
@@ -81,14 +77,19 @@ public class Repository<T extends Document> extends CouchDbRepositorySupport<T> 
     }
 
     public void registerContentObserver(ChangesCommand command, final ContentObserver<T> observer) {
-        final AtomicReference<ChangesFeedAsyncTask> changesFeedAsyncTask = new AtomicReference<ChangesFeedAsyncTask>(new ChangesFeedAsyncTask(db, command) {
+        final ChangesFeedAsyncTask changesFeedAsyncTask = new ChangesFeedAsyncTask(db, command) {
             @Override
             protected void handleDocumentChange(DocumentChange change) {
                 observer.onChange(DataHelper.fromJson(change.getDoc(), type));
             }
-        });
-        changesFeedAsyncTask.get().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-        observers.put(observer, changesFeedAsyncTask.get());
+
+            @Override
+            protected void onDbAccessException(DbAccessException dbAccessException) {
+                Log.d(getClass().getName(), "DB Exception while following changes feed, but ignored:\n " + dbAccessException.getStackTrace());
+            }
+        };
+        changesFeedAsyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        observers.put(observer, changesFeedAsyncTask);
     }
 
     public void registerDocumentObserver(T document, final ContentObserver<T> observer) {
