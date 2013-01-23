@@ -2,8 +2,12 @@ package com.android.data;
 
 import android.os.AsyncTask;
 import android.util.Log;
+import com.android.data.tasks.DataChangesFeedAsyncTask;
 import com.couchbase.touchdb.*;
-import org.ektorp.*;
+import org.ektorp.ComplexKey;
+import org.ektorp.CouchDbConnector;
+import org.ektorp.Options;
+import org.ektorp.ViewQuery;
 import org.ektorp.android.util.ChangesFeedAsyncTask;
 import org.ektorp.changes.ChangesCommand;
 import org.ektorp.changes.DocumentChange;
@@ -76,16 +80,11 @@ public class Repository<T extends Document> extends CouchDbRepositorySupport<T> 
         return createQuery(viewName).includeDocs(true);
     }
 
-    public void registerContentObserver(ChangesCommand command, final ContentObserver<T> observer) {
-        final ChangesFeedAsyncTask changesFeedAsyncTask = new ChangesFeedAsyncTask(db, command) {
+    public void registerContentObserver(final ChangesCommand command, final ContentObserver<T> observer) {
+        final DataChangesFeedAsyncTask changesFeedAsyncTask = new DataChangesFeedAsyncTask(db, command, true) {
             @Override
             protected void handleDocumentChange(DocumentChange change) {
                 observer.onChange(DataHelper.fromJson(change.getDoc(), type));
-            }
-
-            @Override
-            protected void onDbAccessException(DbAccessException dbAccessException) {
-                Log.d(getClass().getName(), "DB Exception while following changes feed, but ignored:\n " + dbAccessException.getStackTrace());
             }
         };
         changesFeedAsyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);

@@ -35,7 +35,7 @@ public class DataService extends Service {
         super.onCreate();
         String dbName = getPackageName();
         dataStore = new DataStore(this, dbName);
-//        listenForNotifications();
+        listenForNotifications();
     }
 
     @Override

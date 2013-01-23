@@ -5,11 +5,11 @@ import android.os.AsyncTask;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import com.android.data.tasks.DataChangesFeedAsyncTask;
 import org.ektorp.CouchDbConnector;
 import org.ektorp.DbAccessException;
 import org.ektorp.ViewQuery;
 import org.ektorp.ViewResult;
-import org.ektorp.android.util.ChangesFeedAsyncTask;
 import org.ektorp.android.util.CouchbaseViewListAdapter;
 import org.ektorp.android.util.EktorpAsyncTask;
 import org.ektorp.changes.ChangesCommand;
@@ -17,7 +17,8 @@ import org.ektorp.changes.DocumentChange;
 
 import java.lang.reflect.ParameterizedType;
 
-import static com.android.data.DataHelper.*;
+import static com.android.data.DataHelper.byTypeName;
+import static com.android.data.DataHelper.fromJson;
 
 public abstract class DataListAdapter<T extends Document> extends CouchbaseViewListAdapter {
     private final int layout;
@@ -123,11 +124,11 @@ public abstract class DataListAdapter<T extends Document> extends CouchbaseViewL
         }
     }
 
-    private class ListChangesAsyncTask extends ChangesFeedAsyncTask {
+    private class ListChangesAsyncTask extends DataChangesFeedAsyncTask {
 
         public ListChangesAsyncTask(CouchDbConnector couchDbConnector,
                                     ChangesCommand changesCommand) {
-            super(couchDbConnector, changesCommand);
+            super(couchDbConnector, changesCommand, true);
         }
 
         @Override
@@ -135,12 +136,6 @@ public abstract class DataListAdapter<T extends Document> extends CouchbaseViewL
             lastUpdateChangesFeed = change.getSequence();
             updateListItems();
         }
-
-        @Override
-        protected void onDbAccessException(DbAccessException dbAccessException) {
-            handleChangesAsyncTaskDbAccessException(dbAccessException);
-        }
-
     }
 
     // END
