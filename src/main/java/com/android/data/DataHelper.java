@@ -3,13 +3,15 @@ package com.android.data;
 import com.android.data.exceptions.DataException;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.ektorp.impl.StdObjectMapperFactory;
 
 import java.io.IOException;
+import java.lang.reflect.ParameterizedType;
 
 public class DataHelper {
-    private static ObjectMapper mapper = new ObjectMapper();
+    private static ObjectMapper mapper = new StdObjectMapperFactory().createObjectMapper();
 
-    public static <T> T fromJson(final String json, final Class<T> cls) {
+    public static <T extends Document> T fromJson(final String json, final Class<T> cls) {
         return new IODataExceptionHandler<T>() {
             @Override
             protected T execute() throws IOException {
@@ -18,7 +20,7 @@ public class DataHelper {
         }.handle();
     }
 
-    public static <T> T fromJson(final JsonNode jsonNode, final Class<T> cls) {
+    public static <T extends Document> T fromJson(final JsonNode jsonNode, final Class<T> cls) {
         return new IODataExceptionHandler<T>() {
             @Override
             protected T execute() throws IOException {
@@ -27,12 +29,18 @@ public class DataHelper {
         }.handle();
     }
 
-    public static String byTypeName(Class<? extends Document> cls) {
+    public static <T extends Document> String byTypeName(Class<T> cls) {
         return "by" + typeName(cls);
     }
 
-    public static String typeName(Class<? extends Document> cls) {
+    public static <T extends Document> String typeName(Class<T> cls) {
         return cls.getSimpleName();
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <T extends Document> Class<T> getGenericClass(Class cls) {
+        ParameterizedType parameterizedType = (ParameterizedType) cls.getGenericSuperclass();
+        return (Class<T>) parameterizedType.getActualTypeArguments()[0];
     }
 
     private static abstract class IODataExceptionHandler<T> {

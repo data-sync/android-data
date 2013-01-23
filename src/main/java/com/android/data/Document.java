@@ -6,6 +6,7 @@ import org.ektorp.support.CouchDbDocument;
 import java.util.HashSet;
 import java.util.Set;
 
+import static com.android.data.DataHelper.getGenericClass;
 import static com.android.data.DataHelper.typeName;
 import static java.util.Arrays.asList;
 
@@ -20,7 +21,7 @@ abstract public class Document<T extends Document> extends CouchDbDocument {
     private String type;
 
     protected Document(Class<T> cls) {
-        setType(typeName(cls));
+        setType(typeName(getGenericClass(this.getClass())));
     }
 
     public String getSequence() {

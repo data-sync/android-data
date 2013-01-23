@@ -15,10 +15,7 @@ import org.ektorp.android.util.EktorpAsyncTask;
 import org.ektorp.changes.ChangesCommand;
 import org.ektorp.changes.DocumentChange;
 
-import java.lang.reflect.ParameterizedType;
-
-import static com.android.data.DataHelper.byTypeName;
-import static com.android.data.DataHelper.fromJson;
+import static com.android.data.DataHelper.*;
 
 public abstract class DataListAdapter<T extends Document> extends CouchbaseViewListAdapter {
     private final int layout;
@@ -51,7 +48,7 @@ public abstract class DataListAdapter<T extends Document> extends CouchbaseViewL
 
     @Override
     public T getItem(int position) {
-        return fromJson(getRow(position).getValueAsNode(), genericDocumentClass());
+        return fromJson(getRow(position).getValueAsNode(), DataHelper.<T>getGenericClass(this.getClass()));
     }
 
     private View newView(ViewGroup parent) {
@@ -61,12 +58,6 @@ public abstract class DataListAdapter<T extends Document> extends CouchbaseViewL
 
     private LayoutInflater getInflater(ViewGroup parent) {
         return (LayoutInflater) parent.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-    }
-
-    @SuppressWarnings("unchecked")
-    private Class<T> genericDocumentClass() {
-        ParameterizedType parameterizedType = (ParameterizedType) getClass().getGenericSuperclass();
-        return (Class<T>) parameterizedType.getActualTypeArguments()[0];
     }
 
     // Fix to run the changes watcher in ThreadPool, so that they are alive - START
@@ -98,7 +89,7 @@ public abstract class DataListAdapter<T extends Document> extends CouchbaseViewL
                         ChangesCommand changesCmd = new ChangesCommand.Builder().since(lastUpdateView)
                                 .includeDocs(false)
                                 .continuous(true)
-                                .filter(byTypeName(genericDocumentClass()))
+                                .filter(byTypeName(getGenericClass(DataListAdapter.this.getClass())))
                                 .heartbeat(5000)
                                 .build();
 

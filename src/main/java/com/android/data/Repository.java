@@ -84,7 +84,11 @@ public class Repository<T extends Document> extends CouchDbRepositorySupport<T> 
         final DataChangesFeedAsyncTask changesFeedAsyncTask = new DataChangesFeedAsyncTask(db, command, true) {
             @Override
             protected void handleDocumentChange(DocumentChange change) {
-                observer.onChange(DataHelper.fromJson(change.getDoc(), type));
+                if(change.isDeleted()){
+                    observer.onDelete(change.getId(), change.getRevision());
+                }else{
+                    observer.onChange(DataHelper.fromJson(change.getDocAsNode(), type));
+                }
             }
         };
         changesFeedAsyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
@@ -108,6 +112,11 @@ public class Repository<T extends Document> extends CouchDbRepositorySupport<T> 
                 if(docId.equals(changedDocument.getId())) {
                     observer.onChange(changedDocument);
                 }
+            }
+
+            @Override
+            public void onDelete(String docId, String revision) {
+                observer.onDelete(docId, revision);
             }
         });
     }
