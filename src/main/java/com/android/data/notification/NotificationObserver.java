@@ -22,6 +22,6 @@ public class NotificationObserver extends ContentObserver<NotificationDocument> 
     }
 
     public ChangesCommand changesCommandToFollow() {
-        return commandToFollowChangesContinuouslyOn(NotificationDocument.class);
+        return commandToFollowChangesContinuously();
     }
 }

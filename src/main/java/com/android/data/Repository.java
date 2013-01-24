@@ -6,7 +6,6 @@ import com.android.data.tasks.DataChangesFeedAsyncTask;
 import com.couchbase.touchdb.*;
 import org.ektorp.ComplexKey;
 import org.ektorp.CouchDbConnector;
-import org.ektorp.Options;
 import org.ektorp.ViewQuery;
 import org.ektorp.android.util.ChangesFeedAsyncTask;
 import org.ektorp.changes.ChangesCommand;
@@ -97,14 +96,8 @@ public class Repository<T extends Document> extends CouchDbRepositorySupport<T> 
 
     public void registerDocumentObserver(T document, final ContentObserver<T> observer) {
         final String docId = document.getId();
-        T documentWithSequence = get(docId, new Options().param("local_seq", "true"));
-        final ChangesCommand command = new ChangesCommand.Builder()
-                .continuous(true)
-                .since(documentWithSequence.getSequence())
-                .filter(byTypeName(type))
-                .heartbeat(5000)
-                .includeDocs(true)
-                .build();
+//        T documentWithSequence = get(docId, new Options().param("local_seq", "true"));
+        final ChangesCommand command = observer.commandToFollowChangesContinuously();
 
         registerContentObserver(command, new ContentObserver<T>() {
             @Override
