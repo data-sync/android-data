@@ -2,25 +2,32 @@ package com.android.data;
 
 import android.test.suitebuilder.annotation.MediumTest;
 import com.android.data.models.Task;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
-import org.mockito.Mock;
 
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.verify;
 import static org.mockito.MockitoAnnotations.initMocks;
 
 public class ObserversTest extends BaseTestCase {
-    @Mock
-    private ContentObserver<Task> contentObserver;
-    @Captor
-    private ArgumentCaptor<Task> taskCaptor;
+    private boolean onChangeCalled;
+    private boolean documentDeleted;
+    private Task documentChanged;
+
+    ContentObserver<Task> taskObserver = new ContentObserver<Task>(){
+        @Override
+        public void onChange(Task document) {
+            documentChanged = document;
+            onChangeCalled = true;
+        }
+        @Override
+        public void onDelete(String docId, String revision) {
+            documentDeleted = true;
+        }
+    };
 
     @Override
     public void setUp() throws Exception {
         super.setUp();
         initMocks(this);
+        onChangeCalled = false;
+        documentDeleted = false;
     }
 
     @MediumTest
@@ -29,14 +36,14 @@ public class ObserversTest extends BaseTestCase {
         taskRepository.add(task);
         taskRepository.add(new Task("Another Doc"));
 
-        taskRepository.registerDocumentObserver(task, contentObserver);
+        taskRepository.registerDocumentObserver(task, taskObserver);
 
         task.updateDescription("Desc2");
         taskRepository.update(task);
 
         sleepEnoughForChangesToBeFollowed();
-        verify(contentObserver).onChange(taskCaptor.capture());
-        assertEquals("Desc2", taskCaptor.getValue().getDescription());
+        assertTrue(onChangeCalled);
+        assertEquals("Desc2", documentChanged.getDescription());
     }
 
     @MediumTest
@@ -44,10 +51,10 @@ public class ObserversTest extends BaseTestCase {
         Task task = new Task("Desc1");
         taskRepository.add(task);
 
-        taskRepository.registerDocumentObserver(task, contentObserver);
+        taskRepository.registerDocumentObserver(task, taskObserver);
         taskRepository.remove(task);
 
         sleepEnoughForChangesToBeFollowed();
-        verify(contentObserver).onDelete(eq(task.getId()), anyString());
+        assertTrue(documentDeleted);
     }
 }
