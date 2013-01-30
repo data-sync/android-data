@@ -32,8 +32,10 @@ public class DataStore {
     private final TouchDBHttpClient httpClient;
     private final String dbName;
     private final CouchDbInstance dbInstance;
+    private final Context context;
 
     public DataStore(final Context context, final String dbName) {
+        this.context = context;
         this.dbName = dbName;
         server = getServer(context);
         httpClient = new TouchDBHttpClient(server);
@@ -49,6 +51,10 @@ public class DataStore {
         if (server != null) {
             server.close();
         }
+    }
+
+    public Context getContext() {
+        return context;
     }
 
     protected CouchDbConnector getConnector() {
