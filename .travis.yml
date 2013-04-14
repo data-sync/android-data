@@ -1,0 +1,15 @@
+language: java
+before_install:
+  - wget http://dl.google.com/android/android-sdk_r20.0.3-linux.tgz
+  - tar -zxf android-sdk_r20.0.3-linux.tgz
+  - export ANDROID_HOME=~/builds/selvakn/android_data/android-sdk-linux
+  - export PATH=$PATH:$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools
+  - android update sdk --no-ui --filter android-15,extra-android-support,platform-tools,system-image
+  - echo no | android create avd -n emulator -t android-15 --skin WVGA800 --abi x86 --force
+before_script:
+  - "export DISPLAY=:99.0"
+  - "sh -e /etc/init.d/xvfb start"
+  - sleep 3 # give xvfb some time to start
+  - emulator -avd emulator -noaudio -no-boot-anim &
+  - sleep 45
+script: mvn install
