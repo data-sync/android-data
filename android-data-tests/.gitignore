@@ -1,0 +1,9 @@
+build.xml
+ant.properties
+local.properties
+project.properties
+target
+.idea
+*.iml
+gen-external-apklibs
+out
