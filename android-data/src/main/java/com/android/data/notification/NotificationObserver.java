@@ -18,14 +18,16 @@ public class NotificationObserver extends ContentObserver<NotificationDocument> 
 
     @Override
     public void onChange(NotificationDocument document) {
+        String text = document.getText();
         Notification notification = new Notification.Builder(context)
                 .setSmallIcon(R.drawable.ic_popup_reminder)
                 .setContentTitle(document.getTitle())
-                .setContentText(document.getText())
+                .setContentText(text)
                 .getNotification();
 
         NotificationManager manager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        manager.notify(1, notification);
+
+        manager.notify(text.hashCode(), notification);
     }
 
     public ChangesCommand changesCommandToFollow() {
