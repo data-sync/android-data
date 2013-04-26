@@ -1,9 +1,11 @@
 language: java
 before_install:
+  - sudo apt-get update -qq
+  - if [ `uname -m` = x86_64 ]; then sudo apt-get install -qq --force-yes libgd2-xpm ia32-libs ia32-libs-multiarch > /dev/null; fi
   - wget http://dl.google.com/android/android-sdk_r20.0.3-linux.tgz
   - tar -zxf android-sdk_r20.0.3-linux.tgz
   - export ANDROID_HOME=`pwd`/android-sdk-linux
-  - export PATH=$PATH:$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools
+  - export PATH=${PATH}:${ANDROID_HOME}/tools:${ANDROID_HOME}/platform-tools
   - android update sdk --no-ui --filter android-15,extra-android-support,platform-tools,system-image
   - echo no | android create avd -n emulator -t android-15 --skin WVGA800 --abi x86 --force
 before_script:
@@ -12,4 +14,6 @@ before_script:
   - sleep 3 # give xvfb some time to start
   - emulator -avd emulator -noaudio -no-boot-anim &
   - sleep 45
-script: mvn install
+install: /bin/true
+script:
+  - mvn install
