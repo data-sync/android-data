@@ -20,9 +20,12 @@ public class DataService extends Service {
     private boolean isReplicationRunning = false;
 
     public IBinder onBind(Intent intent) {
+        String deviceId = Device.register(dataStore);
         if (!isReplicationRunning) {
             @SuppressWarnings("unchecked")
-            Set<String> groups = (HashSet<String>) intent.getSerializableExtra(GROUPS);
+            Set<String> groups = getGroupsFromIntent(intent);
+            groups.add(deviceId);
+
             String remoteDB = intent.getExtras().getString(REMOTE_DB, DEFAULT_REMOTE_DB);
             dataStore.replicate(remoteDB, groups);
             isReplicationRunning = true;
@@ -35,7 +38,6 @@ public class DataService extends Service {
         super.onCreate();
         String dbName = getPackageName();
         dataStore = new DataStore(this, dbName);
-        Device.register(dataStore);
         listenForNotifications();
     }
 
@@ -61,5 +63,13 @@ public class DataService extends Service {
         Repository<NotificationDocument> notificationRepo = new Repository<NotificationDocument>(NotificationDocument.class, dataStore);
         NotificationObserver notificationObserver = new NotificationObserver(this);
         notificationRepo.registerContentObserver(notificationObserver.changesCommandToFollow(), notificationObserver);
+    }
+
+    private Set<String> getGroupsFromIntent(Intent intent) {
+        Set<String> groups = (HashSet<String>) intent.getSerializableExtra(GROUPS);
+        if(groups == null) {
+            groups = new HashSet<String>();
+        }
+        return groups;
     }
 }
