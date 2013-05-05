@@ -12,7 +12,7 @@ public class NotificationDocument extends Document<NotificationDocument> {
     @JsonCreator
     public NotificationDocument(@JsonProperty("title") String title,
                                 @JsonProperty("text") String text) {
-        super(NotificationDocument.class);
+        super();
         this.title = title;
         this.text = text;
     }

@@ -20,8 +20,9 @@ abstract public class Document<T extends Document> extends CouchDbDocument {
     @JsonProperty("type")
     private String type;
 
-    protected Document(Class<T> cls) {
-        setType(typeName(getGenericClass(this.getClass())));
+    protected Document() {
+        Class<T> klass = getGenericClass(this.getClass());
+        setType(typeName(klass));
     }
 
     public String getSequence() {

@@ -14,7 +14,6 @@ public class Task extends Document<Task> {
     @JsonCreator
     public Task(@JsonProperty("description") String description,
                 @JsonProperty("createdDate") Date createdDate) {
-        super(Task.class);
         this.description = description;
         this.createdDate = createdDate;
     }
