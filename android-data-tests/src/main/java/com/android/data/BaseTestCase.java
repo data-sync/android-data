@@ -5,7 +5,7 @@ import com.android.data.models.Task;
 
 public class BaseTestCase extends InstrumentationTestCase {
     protected Repository<Task> taskRepository;
-    private DataStore dataStore;
+    protected DataStore dataStore;
 
     @Override
     public void setUp() throws Exception {

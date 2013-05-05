@@ -35,6 +35,7 @@ public class DataService extends Service {
         super.onCreate();
         String dbName = getPackageName();
         dataStore = new DataStore(this, dbName);
+        Device.register(dataStore);
         listenForNotifications();
     }
 
