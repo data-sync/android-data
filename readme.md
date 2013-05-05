@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/data-sync/android-data.png?branch=master)](https://travis-ci.org/data-sync/android-data)
+
 Android Data Sync
 -----------------
 
