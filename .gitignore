@@ -8,3 +8,5 @@ target
 gen-external-apklibs
 out
 classes
+.gradle
+build

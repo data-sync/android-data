@@ -2,12 +2,12 @@ language: java
 before_install:
   - sudo apt-get update -qq
   - if [ `uname -m` = x86_64 ]; then sudo apt-get install -qq --force-yes libgd2-xpm ia32-libs ia32-libs-multiarch > /dev/null; fi
-  - wget http://dl.google.com/android/android-sdk_r20.0.3-linux.tgz
-  - tar -zxf android-sdk_r20.0.3-linux.tgz
+  - wget http://dl.google.com/android/android-sdk_r21-linux.tgz
+  - tar -zxf android-sdk_r21-linux.tgz
   - export ANDROID_HOME=`pwd`/android-sdk-linux
   - export PATH=${PATH}:${ANDROID_HOME}/tools:${ANDROID_HOME}/platform-tools
-  - android update sdk --no-ui --filter android-15,extra-android-support,platform-tools,system-image
-  - echo no | android create avd -n emulator -t android-15 --skin WVGA800 --abi x86 --force
+  - android update sdk --no-ui --filter android-17,extra-android-support,platform-tools,system-image
+  - echo no | android create avd -n emulator -t android-17 --skin WVGA800 --abi x86 --force
 before_script:
   - "export DISPLAY=:99.0"
   - "sh -e /etc/init.d/xvfb start"
@@ -16,4 +16,4 @@ before_script:
   - sleep 45
 install: /bin/true
 script:
-  - mvn install
+  - ./gradlew connectedInstrumentTest
